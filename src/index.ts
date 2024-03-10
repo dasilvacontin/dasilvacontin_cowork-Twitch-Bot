@@ -458,6 +458,16 @@ ComfyJS.onCommand = async (
 
 		ComfyJS.Say(`@${user} ${clip}`, STREAMER);
 	}
+
+	else if (command === "ttson" && flags.broadcaster) {
+		console.log('text to speech is now on')
+		say.speak('text to speech is now on')
+		textToSpeechStatus = true
+	} else if (command === "ttsoff" && flags.broadcaster) {
+		console.log('text to speech is now on')
+		say.speak('text to speech is now on')
+		textToSpeechStatus = false
+	}
 };
 
 // send a quote, compliment, or timer message
@@ -499,6 +509,8 @@ let lastMessageTimestamp: number = Date.now();
 let timeLimit = 5 * 60 * 1000; // 5 minutes
 let messageLimit = 20;
 
+let textToSpeechStatus = false
+
 ComfyJS.onChat = async (
 	user: string,
 	message: string,
@@ -521,6 +533,14 @@ ComfyJS.onChat = async (
 		lastMessageTimestamp = Date.now();
 	} else {
 		messageCount++;
+	}
+
+	if (
+		!["dasilvabot"].includes(
+			user.toLowerCase()
+		)
+	) {
+		if (textToSpeechStatus) say.speak(`${user} says ${message}`)
 	}
 };
 
