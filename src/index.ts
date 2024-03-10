@@ -32,27 +32,8 @@ const editCommands = ["edit"];
 const deleteCommands = ["remove", "delete", "del"];
 
 // text files
-const compliments: string[] = fs
-	.readFileSync(__dirname + "/../text_files/compliments.txt", "utf8")
-	.replace(/\r/g, "")
-	.split("\n");
-
-const quotes: string[] = fs
-	.readFileSync(__dirname + "/../text_files/quotes.txt", "utf8")
-	.replace(/\r/g, "")
-	.split("\n");
-
 const timerMessages: string[] = fs
 	.readFileSync(__dirname + "/../text_files/timer_messages.txt", "utf8")
-	.replace(/\r/g, "")
-	.split("\n");
-
-// remove \r from file
-const streamers_to_shoutout: string[] = fs
-	.readFileSync(
-		__dirname + "/../text_files/streamers_to_shoutout.txt",
-		"utf8"
-	)
 	.replace(/\r/g, "")
 	.split("\n");
 
@@ -61,7 +42,7 @@ const textToSpeech = (text: string) => {
 	say.speak(text);
 };
 
-const randomAutoResponse = ["compliment", "quote", "timer"] as const;
+const randomAutoResponse = ["timer"] as const;
 
 interface Commands {
 	[key: string]: string;
