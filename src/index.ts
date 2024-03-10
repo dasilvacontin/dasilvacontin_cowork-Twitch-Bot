@@ -53,21 +53,19 @@ let broadcasterCommands: Commands = {};
 
 try {
 	const commandsFile = fs.readFileSync("json_files/commands.json", "utf-8");
+	commands = JSON.parse(commandsFile);
+} catch (err) {
+	console.error(`WOOOOT Error reading commands file: ${err}`);
+}
+
+try {
 	const broadcasterCommandsFile = fs.readFileSync(
 		"json_files/broadcaster_commands.json",
 		"utf-8"
 	);
-
-	commands = JSON.parse(commandsFile);
 	broadcasterCommands = JSON.parse(broadcasterCommandsFile);
 } catch (err) {
-	console.error(`Error reading commands file: ${err}`);
-}
-
-const streamers: { [key: string]: boolean } = {};
-
-for (const s of streamers_to_shoutout) {
-	streamers[s.toLowerCase()] = true;
+	console.error(`WOOOOT Error reading broadcaster commands file: ${err}`);
 }
 
 const sendWebHook = async (url: string, data: any) => {
@@ -127,11 +125,15 @@ function getClip(): Promise<string> {
 }
 
 async function callShoutoutStreamer(username: string) {
-	let userID = await getUsernameId(username);
-	let game = await getLastGame(userID);
+	// let userID = await getUsernameId(username);
+	// let game = await getLastGame(userID);
 
 	ComfyJS.Say(
-		`Hey guys! Please check out @${username}! They were last streaming ${game} at https://twitch.tv/${username}!`,
+		`/shoutout @${username}`,
+		STREAMER
+	);
+	ComfyJS.Say(
+		`Hey guys! Please check out @${username}! https://twitch.tv/${username}!`,
 		STREAMER
 	);
 }
@@ -187,14 +189,7 @@ ComfyJS.onCommand = async (
 	flags: any,
 	extra: any
 ) => {
-	// shoutout streamers
-	if (streamers[user.toLowerCase()]) {
-		setTimeout(() => {
-			callShoutoutStreamer(user);
-		}, 3000);
-		streamers[user.toLowerCase()] = false;
-	}
-
+	console.log(`${user} attempts to use ${command} with arguments ${message}`)
 	// Check if the command exists in the regular commands object
 	if (commands[command]) {
 		let reply = commands[command];
@@ -237,6 +232,8 @@ ComfyJS.onCommand = async (
 
 		ComfyJS.Say(`${user} promotion successful!`, STREAMER);
 	}
+
+	/*
 	// Handle the "compliment" command
 	else if (command === "compliment") {
 		let compliment_user = `@${user}`;
@@ -253,6 +250,9 @@ ComfyJS.onCommand = async (
 
 		ComfyJS.Say(`${compliment_user} ${random_compliment}`, STREAMER);
 	}
+	*/
+
+	/*
 	// Handle the "quote" command
 	else if (command === "quote") {
 		let random_quote = quotes[Math.floor(Math.random() * quotes.length)];
@@ -261,6 +261,8 @@ ComfyJS.onCommand = async (
 
 		ComfyJS.Say(`${random_quote}`, STREAMER);
 	}
+	*/
+
 	// Handle the "so" command if the user is a broadcaster or mod
 	else if (command === "so" && (flags.broadcaster || flags.mod)) {
 		let streamer = message.split(" ")[0];
@@ -466,6 +468,7 @@ function activateTimerMessages(user: string) {
 			Math.floor(Math.random() * randomAutoResponse.length)
 		];
 
+	/*
 	if (autoresponder === "compliment") {
 		let randomCompliment =
 			compliments[Math.floor(Math.random() * compliments.length)];
@@ -479,7 +482,9 @@ function activateTimerMessages(user: string) {
 		// Send a random quote to the chat
 
 		ComfyJS.Say(`${randomQuote}`, STREAMER);
-	} else if (autoresponder === "timer") {
+	
+	} */
+	if (autoresponder === "timer") {
 		let randomTimerMessage =
 			timerMessages[Math.floor(Math.random() * timerMessages.length)];
 
@@ -501,18 +506,11 @@ ComfyJS.onChat = async (
 	self: boolean,
 	extra: any
 ) => {
-	// shoutout streamers
-	if (streamers[user.toLowerCase()]) {
-		setTimeout(() => {
-			callShoutoutStreamer(user);
-		}, 3000);
-		streamers[user.toLowerCase()] = false;
-	}
 
 	// After:
 	// 20 messages and 5 minutes
 	if (
-		!["ryandotts", "streamelements", "ryanpython"].includes(
+		!["dasilvacontin_cowork", "dasilvabot"].includes(
 			user.toLowerCase()
 		) &&
 		messageCount >= messageLimit &&
