@@ -555,4 +555,18 @@ ComfyJS.onReward = (
 	textToSpeech(`${user} redeemed ${reward}`);
 };
 
+let onWakeUp = function () {
+	console.log("٩(ˊ〇ˋ*)")
+	ComfyJS.Say("٩(ˊ〇ˋ*)", STREAMER);
+}
+
+ComfyJS.onJoin = async (username, self, extra) => {
+	onWakeUp()
+	onWakeUp = (() => {})
+}
+
+// ComfyJS.onRaid = async (username, viewers, extra) => {
+// 	ComfyJS.Say()
+// }
+
 ComfyJS.Init(BOT_NAME, `oauth:${CLIENT_TOKEN}`, STREAMER);
